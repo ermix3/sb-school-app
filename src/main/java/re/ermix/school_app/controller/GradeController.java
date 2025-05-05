@@ -6,18 +6,18 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import re.ermix.school_app.enums.GradeTypeEnum;
 import re.ermix.school_app.model.Grade;
-import re.ermix.school_app.model.Grade.GradeType;
 import re.ermix.school_app.service.GradeService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-@RestController
-@RequestMapping("grades")
-@RequiredArgsConstructor
 @Log4j2
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("grades")
 public class GradeController {
 
     private final GradeService gradeService;
@@ -43,10 +43,10 @@ public class GradeController {
         return grades.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(grades);
     }
 
-    @GetMapping("/type/{gradeType}")
-    public ResponseEntity<List<Grade>> getGradesByType(@PathVariable GradeType gradeType) {
-        log.info("GET /grades/type/{}", gradeType);
-        List<Grade> grades = gradeService.getGradesByType(gradeType);
+    @GetMapping("/type/{gradeTypeEnum}")
+    public ResponseEntity<List<Grade>> getGradesByType(@PathVariable GradeTypeEnum gradeTypeEnum) {
+        log.info("GET /grades/type/{}", gradeTypeEnum);
+        List<Grade> grades = gradeService.getGradesByType(gradeTypeEnum);
         return grades.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(grades);
     }
 
@@ -106,13 +106,13 @@ public class GradeController {
     public ResponseEntity<Grade> addGradeToEnrollment(
             @RequestParam Long enrollmentId,
             @RequestParam BigDecimal gradeValue,
-            @RequestParam GradeType gradeType,
+            @RequestParam GradeTypeEnum gradeTypeEnum,
             @RequestParam(required = false) String comment,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateRecorded) {
-        log.info("POST /grades enrollmentId={} gradeValue={} gradeType={} dateRecorded={}", 
-                enrollmentId, gradeValue, gradeType, dateRecorded);
+        log.info("POST /grades enrollmentId={} gradeValue={} gradeTypeEnum={} dateRecorded={}",
+                enrollmentId, gradeValue, gradeTypeEnum, dateRecorded);
         try {
-            Grade grade = gradeService.addGradeToEnrollment(enrollmentId, gradeValue, gradeType, comment, dateRecorded);
+            Grade grade = gradeService.addGradeToEnrollment(enrollmentId, gradeValue, gradeTypeEnum, comment, dateRecorded);
             return ResponseEntity.status(HttpStatus.CREATED).body(grade);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

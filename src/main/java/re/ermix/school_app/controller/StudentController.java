@@ -6,15 +6,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import re.ermix.school_app.model.Student;
+import re.ermix.school_app.model.StudentSearchCriteria;
 import re.ermix.school_app.service.StudentService;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@RestController
-@RequestMapping("students")
-@RequiredArgsConstructor
 @Log4j2
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("students")
 public class StudentController {
 
     private final StudentService studentService;
@@ -33,48 +34,28 @@ public class StudentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Student> getStudentByEmail(@PathVariable String email) {
-        log.info("GET /students/email/{}", email);
-        return studentService.getStudentByEmail(email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/lastName/{lastName}")
-    public ResponseEntity<List<Student>> getStudentsByLastName(@PathVariable String lastName) {
-        log.info("GET /students/lastName/{}", lastName);
-        List<Student> students = studentService.getStudentsByLastName(lastName);
-        return students.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(students);
-    }
-
-    @GetMapping("/name")
-    public ResponseEntity<List<Student>> getStudentsByName(
-            @RequestParam String firstName, @RequestParam String lastName) {
-        log.info("GET /students/name firstName={} lastName={}", firstName, lastName);
-        List<Student> students = studentService.getStudentsByName(firstName, lastName);
-        return students.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(students);
-    }
-
-    @GetMapping("/enrollmentDate/{date}")
-    public ResponseEntity<List<Student>> getStudentsByEnrollmentDate(@PathVariable LocalDate date) {
-        log.info("GET /students/enrollmentDate/{}", date);
-        List<Student> students = studentService.getStudentsByEnrollmentDate(date);
-        return students.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(students);
-    }
-
-    @GetMapping("/dateOfBirth")
-    public ResponseEntity<List<Student>> getStudentsByDateOfBirthRange(
-            @RequestParam LocalDate startDate, @RequestParam LocalDate endDate) {
-        log.info("GET /students/dateOfBirth startDate={} endDate={}", startDate, endDate);
-        List<Student> students = studentService.getStudentsByDateOfBirthRange(startDate, endDate);
-        return students.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(students);
-    }
-
-    @GetMapping("/course/{courseId}")
-    public ResponseEntity<List<Student>> getStudentsByCourse(@PathVariable Long courseId) {
-        log.info("GET /students/course/{}", courseId);
-        List<Student> students = studentService.getStudentsByCourse(courseId);
+    @GetMapping("/search")
+    public ResponseEntity<List<Student>> searchStudents(
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) LocalDate enrollmentDate,
+            @RequestParam(required = false) LocalDate dateOfBirthStart,
+            @RequestParam(required = false) LocalDate dateOfBirthEnd,
+            @RequestParam(required = false) Long courseId) {
+        
+        log.info("GET /students/search with criteria");
+        
+        StudentSearchCriteria criteria = new StudentSearchCriteria();
+        criteria.setEmail(email);
+        criteria.setFirstName(firstName);
+        criteria.setLastName(lastName);
+        criteria.setEnrollmentDate(enrollmentDate);
+        criteria.setDateOfBirthStart(dateOfBirthStart);
+        criteria.setDateOfBirthEnd(dateOfBirthEnd);
+        criteria.setCourseId(courseId);
+        
+        List<Student> students = studentService.searchStudents(criteria);
         return students.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(students);
     }
 

@@ -1,6 +1,7 @@
 package re.ermix.school_app;
 
 import org.springframework.boot.SpringApplication;
+import re.ermix.school_app.config.TestcontainersConfiguration;
 
 public class TestSchoolAppApplication {
 

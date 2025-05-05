@@ -6,17 +6,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import re.ermix.school_app.enums.EnrollmentStatusEnum;
 import re.ermix.school_app.model.Enrollment;
-import re.ermix.school_app.model.Enrollment.EnrollmentStatus;
 import re.ermix.school_app.service.EnrollmentService;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@RestController
-@RequestMapping("enrollments")
-@RequiredArgsConstructor
 @Log4j2
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("enrollments")
 public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
@@ -59,7 +59,7 @@ public class EnrollmentController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<Enrollment>> getEnrollmentsByStatus(@PathVariable EnrollmentStatus status) {
+    public ResponseEntity<List<Enrollment>> getEnrollmentsByStatus(@PathVariable EnrollmentStatusEnum status) {
         log.info("GET /enrollments/status/{}", status);
         List<Enrollment> enrollments = enrollmentService.getEnrollmentsByStatus(status);
         return enrollments.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(enrollments);
@@ -76,7 +76,7 @@ public class EnrollmentController {
 
     @GetMapping("/student/{studentId}/status/{status}")
     public ResponseEntity<List<Enrollment>> getEnrollmentsByStudentAndStatus(
-            @PathVariable Long studentId, @PathVariable EnrollmentStatus status) {
+            @PathVariable Long studentId, @PathVariable EnrollmentStatusEnum status) {
         log.info("GET /enrollments/student/{}/status/{}", studentId, status);
         List<Enrollment> enrollments = enrollmentService.getEnrollmentsByStudentAndStatus(studentId, status);
         return enrollments.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(enrollments);
@@ -84,7 +84,7 @@ public class EnrollmentController {
 
     @GetMapping("/course/{courseId}/status/{status}")
     public ResponseEntity<List<Enrollment>> getEnrollmentsByCourseAndStatus(
-            @PathVariable Long courseId, @PathVariable EnrollmentStatus status) {
+            @PathVariable Long courseId, @PathVariable EnrollmentStatusEnum status) {
         log.info("GET /enrollments/course/{}/status/{}", courseId, status);
         List<Enrollment> enrollments = enrollmentService.getEnrollmentsByCourseAndStatus(courseId, status);
         return enrollments.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(enrollments);
@@ -111,7 +111,7 @@ public class EnrollmentController {
 
     @PutMapping("/{id}/status")
     public ResponseEntity<Enrollment> updateEnrollmentStatus(
-            @PathVariable Long id, @RequestParam EnrollmentStatus status) {
+            @PathVariable Long id, @RequestParam EnrollmentStatusEnum status) {
         log.info("PUT /enrollments/{}/status?status={}", id, status);
         try {
             Enrollment enrollment = enrollmentService.updateEnrollmentStatus(id, status);

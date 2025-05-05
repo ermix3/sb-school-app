@@ -11,10 +11,10 @@ import re.ermix.school_app.service.TeacherService;
 import java.time.LocalDate;
 import java.util.List;
 
-@RestController
-@RequestMapping("teachers")
-@RequiredArgsConstructor
 @Log4j2
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("teachers")
 public class TeacherController {
 
     private final TeacherService teacherService;

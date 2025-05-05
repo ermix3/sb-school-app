@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import re.ermix.school_app.enums.EnrollmentStatusEnum;
 import re.ermix.school_app.model.Course;
 import re.ermix.school_app.model.Enrollment;
-import re.ermix.school_app.model.Enrollment.EnrollmentStatus;
 import re.ermix.school_app.model.Student;
 import re.ermix.school_app.repository.CourseRepository;
 import re.ermix.school_app.repository.EnrollmentRepository;
@@ -16,10 +16,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Log4j2
 public class EnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
@@ -52,7 +52,7 @@ public class EnrollmentService {
         return enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId);
     }
 
-    public List<Enrollment> getEnrollmentsByStatus(EnrollmentStatus status) {
+    public List<Enrollment> getEnrollmentsByStatus(EnrollmentStatusEnum status) {
         log.info("Get enrollments by status: {}", status);
         return enrollmentRepository.findByStatus(status);
     }
@@ -62,12 +62,12 @@ public class EnrollmentService {
         return enrollmentRepository.findByEnrollmentDateBetween(startDate, endDate);
     }
 
-    public List<Enrollment> getEnrollmentsByStudentAndStatus(Long studentId, EnrollmentStatus status) {
+    public List<Enrollment> getEnrollmentsByStudentAndStatus(Long studentId, EnrollmentStatusEnum status) {
         log.info("Get enrollments by student id: {} and status: {}", studentId, status);
         return enrollmentRepository.findByStudentIdAndStatus(studentId, status);
     }
 
-    public List<Enrollment> getEnrollmentsByCourseAndStatus(Long courseId, EnrollmentStatus status) {
+    public List<Enrollment> getEnrollmentsByCourseAndStatus(Long courseId, EnrollmentStatusEnum status) {
         log.info("Get enrollments by course id: {} and status: {}", courseId, status);
         return enrollmentRepository.findByCourseIdAndStatus(courseId, status);
     }
@@ -87,11 +87,11 @@ public class EnrollmentService {
         Optional<Enrollment> existingEnrollment = enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId);
         if (existingEnrollment.isPresent()) {
             Enrollment enrollment = existingEnrollment.get();
-            if (enrollment.getStatus() == EnrollmentStatus.ACTIVE) {
+            if (enrollment.getStatus() == EnrollmentStatusEnum.ACTIVE) {
                 throw new IllegalStateException("Student is already enrolled in this course");
-            } else if (enrollment.getStatus() == EnrollmentStatus.DROPPED) {
+            } else if (enrollment.getStatus() == EnrollmentStatusEnum.DROPPED) {
                 // Reactivate the enrollment
-                enrollment.setStatus(EnrollmentStatus.ACTIVE);
+                enrollment.setStatus(EnrollmentStatusEnum.ACTIVE);
                 enrollment.setEnrollmentDate(enrollmentDate);
                 return enrollmentRepository.save(enrollment);
             }
@@ -107,7 +107,7 @@ public class EnrollmentService {
         enrollment.setStudent(student);
         enrollment.setCourse(course);
         enrollment.setEnrollmentDate(enrollmentDate);
-        enrollment.setStatus(EnrollmentStatus.ACTIVE);
+        enrollment.setStatus(EnrollmentStatusEnum.ACTIVE);
 
         // Add enrollment to student
         student.addEnrollment(enrollment);
@@ -116,7 +116,7 @@ public class EnrollmentService {
     }
 
     @Transactional
-    public Enrollment updateEnrollmentStatus(Long enrollmentId, EnrollmentStatus status) {
+    public Enrollment updateEnrollmentStatus(Long enrollmentId, EnrollmentStatusEnum status) {
         log.info("Updating enrollment id: {} to status: {}", enrollmentId, status);
         return enrollmentRepository.findById(enrollmentId)
                 .map(enrollment -> {

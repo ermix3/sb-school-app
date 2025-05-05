@@ -2,18 +2,20 @@ package re.ermix.school_app.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import re.ermix.school_app.enums.EnrollmentStatusEnum;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"student", "grades"})
+@EqualsAndHashCode(exclude = {"student", "grades"})
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,7 +40,7 @@ public class Enrollment {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EnrollmentStatus status = EnrollmentStatus.ACTIVE;
+    private EnrollmentStatusEnum status = EnrollmentStatusEnum.ACTIVE;
 
     @JsonBackReference
     @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -62,10 +64,5 @@ public class Enrollment {
     public void removeGrade(Grade grade) {
         grades.remove(grade);
         grade.setEnrollment(null);
-    }
-
-    // Enum for enrollment status
-    public enum EnrollmentStatus {
-        ACTIVE, DROPPED, COMPLETED
     }
 }

@@ -3,8 +3,8 @@ package re.ermix.school_app.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import re.ermix.school_app.enums.GradeTypeEnum;
 import re.ermix.school_app.model.Grade;
-import re.ermix.school_app.model.Grade.GradeType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     
     List<Grade> findByEnrollmentId(Long enrollmentId);
     
-    List<Grade> findByGradeType(GradeType gradeType);
+    List<Grade> findByGradeType(GradeTypeEnum gradeType);
     
     List<Grade> findByDateRecordedBetween(LocalDate startDate, LocalDate endDate);
     

@@ -10,10 +10,10 @@ import re.ermix.school_app.service.CourseService;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("courses")
-@RequiredArgsConstructor
 @Log4j2
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("courses")
 public class CourseController {
 
     private final CourseService courseService;

@@ -3,16 +3,23 @@ package re.ermix.school_app.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import re.ermix.school_app.enums.GradeTypeEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@ToString(exclude = "enrollment")
+@EqualsAndHashCode(exclude = "enrollment")
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,7 +40,7 @@ public class Grade {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "grade_type", nullable = false)
-    private GradeType gradeType;
+    private GradeTypeEnum gradeType;
 
     @Column(columnDefinition = "TEXT")
     private String comment;
@@ -48,9 +55,4 @@ public class Grade {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // Enum for grade type
-    public enum GradeType {
-        ASSIGNMENT, QUIZ, MIDTERM, FINAL, PROJECT
-    }
 }

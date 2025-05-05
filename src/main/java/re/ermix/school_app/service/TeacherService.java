@@ -11,10 +11,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Log4j2
 public class TeacherService {
 
     private final TeacherRepository teacherRepository;

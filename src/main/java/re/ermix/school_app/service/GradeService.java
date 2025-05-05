@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import re.ermix.school_app.enums.GradeTypeEnum;
 import re.ermix.school_app.model.Enrollment;
 import re.ermix.school_app.model.Grade;
-import re.ermix.school_app.model.Grade.GradeType;
 import re.ermix.school_app.repository.EnrollmentRepository;
 import re.ermix.school_app.repository.GradeRepository;
 
@@ -15,10 +15,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Log4j2
 public class GradeService {
 
     private final GradeRepository gradeRepository;
@@ -39,9 +39,9 @@ public class GradeService {
         return gradeRepository.findByEnrollmentId(enrollmentId);
     }
 
-    public List<Grade> getGradesByType(GradeType gradeType) {
-        log.info("Get grades by type: {}", gradeType);
-        return gradeRepository.findByGradeType(gradeType);
+    public List<Grade> getGradesByType(GradeTypeEnum gradeTypeEnum) {
+        log.info("Get grades by type: {}", gradeTypeEnum);
+        return gradeRepository.findByGradeType(gradeTypeEnum);
     }
 
     public List<Grade> getGradesByDateRange(LocalDate startDate, LocalDate endDate) {
@@ -80,9 +80,9 @@ public class GradeService {
     }
 
     @Transactional
-    public Grade addGradeToEnrollment(Long enrollmentId, BigDecimal gradeValue, GradeType gradeType, 
+    public Grade addGradeToEnrollment(Long enrollmentId, BigDecimal gradeValue, GradeTypeEnum gradeTypeEnum,
                                      String comment, LocalDate dateRecorded) {
-        log.info("Adding grade to enrollment id: {}, grade value: {}, grade type: {}", enrollmentId, gradeValue, gradeType);
+        log.info("Adding grade to enrollment id: {}, grade value: {}, grade type: {}", enrollmentId, gradeValue, gradeTypeEnum);
         // Check if enrollment exists
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Enrollment not found with id: " + enrollmentId));
@@ -91,7 +91,7 @@ public class GradeService {
         Grade grade = new Grade();
         grade.setEnrollment(enrollment);
         grade.setGradeValue(gradeValue);
-        grade.setGradeType(gradeType);
+        grade.setGradeType(gradeTypeEnum);
         grade.setComment(comment);
         grade.setDateRecorded(dateRecorded);
 

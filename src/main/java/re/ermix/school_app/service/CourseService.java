@@ -11,10 +11,10 @@ import re.ermix.school_app.repository.EnrollmentRepository;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Log4j2
 public class CourseService {
 
     private final CourseRepository courseRepository;
