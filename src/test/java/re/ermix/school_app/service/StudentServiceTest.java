@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.domain.Specification;
 import re.ermix.school_app.enums.EnrollmentStatusEnum;
 import re.ermix.school_app.model.Course;
 import re.ermix.school_app.model.Enrollment;
@@ -115,82 +116,85 @@ class StudentServiceTest {
 
     @Test
     void getStudentByEmail_whenStudentExists() {
-        String targetEmail = "john.doe@example.com";
         // Arrange
-        when(studentRepository.findByEmail(targetEmail)).thenReturn(Optional.of(student1));
+        String targetEmail = "john.doe@example.com";
+        var criteria = StudentSearchCriteria.builder().email(targetEmail).build();
+        when(studentRepository.findAll(any(Specification.class))).thenReturn(List.of(student1));
 
         // Act
-        var criteria = StudentSearchCriteria.builder().email(targetEmail).build();
         List<Student> result = studentService.searchStudents(criteria);
 
         // Assert
         assertEquals(1, result.size());
-        assertEquals(student1.getId(), result.getFirst().getId());
-        assertEquals(student1.getEmail(), result.getFirst().getEmail());
-        verify(studentRepository, times(1)).findByEmail(targetEmail);
+        assertEquals(student1.getId(), result.get(0).getId());
+        assertEquals(student1.getEmail(), result.get(0).getEmail());
+        verify(studentRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
     void getStudentByEmail_whenStudentDoesNotExist() {
         // Arrange
         String targetEmail = "nonexistent@example.com";
-        when(studentRepository.findByEmail(targetEmail)).thenReturn(Optional.empty());
+        var criteria = StudentSearchCriteria.builder().email(targetEmail).build();
+        when(studentRepository.findAll(any(Specification.class))).thenReturn(List.of());
 
         // Act
-        var criteria = StudentSearchCriteria.builder().email(targetEmail).build();
         List<Student> result = studentService.searchStudents(criteria);
+
         // Assert
-        assertEquals(1, result.size());
-        assertEquals(targetEmail, result.getFirst().getEmail());
-        verify(studentRepository, times(1)).findByEmail(targetEmail);
+        assertEquals(0, result.size());
+        verify(studentRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
     void getStudentsByLastName() {
         // Arrange
-        when(studentRepository.findByLastName("Smith")).thenReturn(List.of(student2));
+        String lastName = "Smith";
+        var criteria = StudentSearchCriteria.builder().lastName(lastName).build();
+        when(studentRepository.findAll(any(Specification.class))).thenReturn(List.of(student2));
 
         // Act
-        var criteria = StudentSearchCriteria.builder().lastName("Smith").build();
         List<Student> result = studentService.searchStudents(criteria);
 
         // Assert
         assertEquals(1, result.size());
-        assertEquals("Smith", result.getFirst().getLastName());
-        verify(studentRepository, times(1)).findByLastName("Smith");
+        assertEquals("Smith", result.get(0).getLastName());
+        verify(studentRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
     void getStudentsByName() {
         // Arrange
-        when(studentRepository.findByFirstNameAndLastName("John", "Doe")).thenReturn(List.of(student1));
+        String firstName = "John";
+        String lastName = "Doe";
+        var criteria = StudentSearchCriteria.builder().firstName(firstName).lastName(lastName).build();
+        when(studentRepository.findAll(any(Specification.class))).thenReturn(List.of(student1));
 
         // Act
-        var criteria = StudentSearchCriteria.builder().firstName("John").lastName("Doe").build();
         List<Student> result = studentService.searchStudents(criteria);
 
         // Assert
         assertEquals(1, result.size());
         assertEquals("John", result.get(0).getFirstName());
         assertEquals("Doe", result.get(0).getLastName());
-        verify(studentRepository, times(1)).findByFirstNameAndLastName("John", "Doe");
+        verify(studentRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
     void getStudentsByEnrollmentDate() {
         // Arrange
         LocalDate enrollmentDate = LocalDate.of(2022, 9, 1);
-        when(studentRepository.findByEnrollmentDate(enrollmentDate)).thenReturn(studentList);
+        var criteria = StudentSearchCriteria.builder().enrollmentDate(enrollmentDate).build();
+        when(studentRepository.findAll(any(Specification.class))).thenReturn(studentList);
 
         // Act
-        var criteria = StudentSearchCriteria.builder().enrollmentDate(enrollmentDate).build();
         List<Student> result = studentService.searchStudents(criteria);
 
         // Assert
         assertEquals(2, result.size());
         assertEquals(enrollmentDate, result.get(0).getEnrollmentDate());
         assertEquals(enrollmentDate, result.get(1).getEnrollmentDate());
-        verify(studentRepository, times(1)).findByEnrollmentDate(enrollmentDate);
+        verify(studentRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
@@ -198,34 +202,34 @@ class StudentServiceTest {
         // Arrange
         LocalDate startDate = LocalDate.of(1999, 1, 1);
         LocalDate endDate = LocalDate.of(2000, 12, 31);
-        when(studentRepository.findByDateOfBirthBetween(startDate, endDate)).thenReturn(studentList);
-
-        // Act
         var criteria = StudentSearchCriteria.builder()
                 .dateOfBirthStart(startDate)
                 .dateOfBirthEnd(endDate)
                 .build();
+        when(studentRepository.findAll(any(Specification.class))).thenReturn(studentList);
+
+        // Act
         List<Student> result = studentService.searchStudents(criteria);
 
         // Assert
         assertEquals(2, result.size());
-        verify(studentRepository, times(1)).findByDateOfBirthBetween(startDate, endDate);
+        verify(studentRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
     void getStudentsByCourse() {
         // Arrange
         Long courseId = 1L;
-        when(studentRepository.findByCourseId(courseId)).thenReturn(List.of(student1));
+        var criteria = StudentSearchCriteria.builder().courseId(courseId).build();
+        when(studentRepository.findAll(any(Specification.class))).thenReturn(List.of(student1));
 
         // Act
-        var criteria = StudentSearchCriteria.builder().courseId(courseId).build();
         List<Student> result = studentService.searchStudents(criteria);
 
         // Assert
         assertEquals(1, result.size());
         assertEquals(student1.getId(), result.get(0).getId());
-        verify(studentRepository, times(1)).findByCourseId(courseId);
+        verify(studentRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
@@ -304,22 +308,15 @@ class StudentServiceTest {
         newStudent.setEnrollmentDate(LocalDate.of(2023, 9, 1));
 
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
-        when(studentRepository.save(any(Student.class))).thenAnswer(invocation -> {
-            Student savedStudent = invocation.getArgument(0);
-            assertEquals(studentId, savedStudent.getId()); // Verify ID was set
-            return savedStudent;
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            studentService.updateStudent(studentId, newStudent);
         });
 
-        // Act
-        Student result = studentService.updateStudent(studentId, newStudent);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(studentId, result.getId()); // ID should be set to the requested ID
-        assertEquals(newStudent.getFirstName(), result.getFirstName());
-        assertEquals(newStudent.getLastName(), result.getLastName());
+        assertEquals("Student not found with id: " + studentId, exception.getMessage());
         verify(studentRepository, times(1)).findById(studentId);
-        verify(studentRepository, times(1)).save(any(Student.class));
+        verify(studentRepository, never()).save(any(Student.class));
     }
 
     @Test

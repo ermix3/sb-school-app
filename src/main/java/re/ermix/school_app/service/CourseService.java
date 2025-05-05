@@ -81,7 +81,7 @@ public class CourseService {
 
         Long activeEnrollments = enrollmentRepository.countActiveByCourseId(courseId);
         boolean isAvailable = activeEnrollments < course.getMaxStudents();
-        log.info("Course {} availability: {} (active enrollments: {}, max students: {})", 
+        log.info("Course {} availability: {} (active enrollments: {}, max students: {})",
                 courseId, isAvailable, activeEnrollments, course.getMaxStudents());
         return isAvailable;
     }
@@ -89,6 +89,9 @@ public class CourseService {
     @Transactional
     public Course saveCourse(Course course) {
         log.info("Save course: {}", course.getCourseCode());
+        if (courseRepository.findByCourseCode(course.getCourseCode()).isPresent()) {
+            throw new RuntimeException("Should throw exception for duplicate course code");
+        }
         return courseRepository.save(course);
     }
 

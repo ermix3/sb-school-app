@@ -4,9 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import re.ermix.school_app.TestSchoolAppApplication;
+import re.ermix.school_app.config.TestcontainersConfiguration;
 import re.ermix.school_app.model.Course;
 import re.ermix.school_app.model.Teacher;
 import re.ermix.school_app.repository.CourseRepository;
@@ -23,9 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * These tests verify that CourseService correctly interacts with the database
  * and other components.
  */
-@SpringBootTest(classes = TestSchoolAppApplication.class)
-@ActiveProfiles("test")
 @Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+@Import(TestcontainersConfiguration.class)
 public class CourseServiceIntegrationTest {
 
     @Autowired

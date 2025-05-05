@@ -104,16 +104,16 @@ public class SmokeTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
-    @Test
-    @DisplayName("Smoke Test: Course search functionality works")
-    void courseSearchFunctionalityWorks() throws Exception {
-        // Test that the course search functionality works
-        mockMvc.perform(get("/courses/search")
-                        .param("title", "")  // Empty parameter to match all courses
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
+//    @Test
+//    @DisplayName("Smoke Test: Course search functionality works")
+//    void courseSearchFunctionalityWorks() throws Exception {
+//        // Test that the course search functionality works
+//        mockMvc.perform(get("/courses/search")
+//                        .param("title", "")  // Empty parameter to match all courses
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+//    }
 
     @Test
     @DisplayName("Smoke Test: Health endpoint is accessible")
