@@ -1,6 +1,7 @@
 # School Management System
 
-A comprehensive School Management System built with Spring Boot, Jakarta EE, and Spring Data JPA, designed to manage students, teachers, courses, enrollments, and grades in an educational institution.
+A comprehensive School Management System built with Spring Boot, Jakarta EE, and Spring Data JPA, designed to manage
+students, teachers, courses, enrollments, and grades in an educational institution.
 
 ## 🚀 Features
 
@@ -15,10 +16,12 @@ A comprehensive School Management System built with Spring Boot, Jakarta EE, and
 - **Java 21**: Core programming language
 - **Spring Boot**: Application framework
 - **Spring Data JPA**: Data access and persistence
-- **Spring MVC**: Web layer and RESTful API 
+- **Spring MVC**: Web layer and RESTful API
 - **Lombok**: Reduces boilerplate code
 - **Flyway**: Database migration tool
 - **MySQL**: Database (configurable)
+- **Docker Compose support**: Simplifies running the app with all required services
+- **Testcontainers**: Testing framework
 - **JUnit 5**: Testing framework
 
 ## 📊 Database Schema
@@ -37,18 +40,18 @@ The application uses a relational database with the following core tables:
 
 - Java 21 or higher
 - Maven
-- MySQL (optional)
+- MySQL
 
 ### Installation
 
 1. Clone the repository:
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/ermix3/sb-school-app.git
    ```
 
 2. Navigate to the project directory:
    ```bash
-   cd school-management-system
+   cd sb-school-app
    ```
 
 3. Build the project:
@@ -61,7 +64,7 @@ The application uses a relational database with the following core tables:
    ./mvnw spring-boot:run
    ```
 
-The application will start on `http://localhost:8080`
+The application will start on `http://localhost:8080/api/v1/swagger-ui/index.html`
 
 ## 🔍 API Endpoints
 
@@ -80,5 +83,3 @@ The project includes comprehensive testing:
 - Unit tests for service and repository layers
 - Integration tests for controllers and APIs
 - Database migration tests
-
-Run tests with:
